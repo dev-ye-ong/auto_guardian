@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'register_screen.dart';
+import 'dart:convert';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -17,10 +18,13 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final response = await http.post(
         Uri.parse('$serverUrl/login'),
-        body: {
+        headers: {
+          'Content-Type': 'application/json', // 추가
+        },
+        body: jsonEncode({
           'id': idController.text,
           'password': passwordController.text,
-        },
+        }),
       );
 
       if (response.statusCode == 200) {
@@ -31,11 +35,19 @@ class _LoginScreenState extends State<LoginScreen> {
         String token = response.body;
 
         // 로그인 후 다음 페이지로 이동
-        Navigator.pushNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
         // 로그인 실패
         print('로그인 실패. 서버 응답 코드: ${response.statusCode}');
         print('응답 본문: ${response.body}');
+
+        // 실패 메시지를 사용자에게 알림
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('로그인 실패. 다시 시도해주세요.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
       }
     } catch (error) {
       // 예외 처리
@@ -84,5 +96,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
 
 
