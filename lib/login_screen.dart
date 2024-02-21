@@ -19,7 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final response = await http.post(
         Uri.parse('$serverUrl/login'),
         headers: {
-          'Content-Type': 'application/json', // 추가
+          'Content-Type': 'application/json',
         },
         body: jsonEncode({
           'id': idController.text,
